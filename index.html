@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1NULLBARBER — Premium Barber Shop</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--black:#080808;--dark:#101010;--card:#151515;--gold:#d6b36a;--gold-light:#f0d99b;--white:#fff;--gray:#a5a5a5;--border:rgba(214,179,106,.22)}
+html{scroll-behavior:smooth}
+body{font-family:Arial,Helvetica,sans-serif;background:var(--black);color:var(--white);line-height:1.6;-webkit-tap-highlight-color:transparent}
+button,.barber-card,.service-card,a{touch-action:manipulation}
+section{scroll-margin-top:60px}
+
+/* NAVIGATION */
+nav{position:fixed;top:0;left:0;width:100%;z-index:1000;padding:20px 6%;display:flex;justify-content:space-between;align-items:center;background:rgba(8,8,8,.82);backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);border-bottom:1px solid rgba(255,255,255,.06)}
+.logo{font-size:24px;font-weight:900;letter-spacing:4px}
+.logo span{color:var(--gold)}
+nav ul{display:flex;list-style:none;gap:35px}
+nav a{text-decoration:none;color:#fff;font-size:14px;letter-spacing:1px;transition:.3s}
+nav a:hover{color:var(--gold)}
+.nav-button{padding:11px 20px;border:1px solid var(--gold);color:var(--gold);border-radius:30px}
+.nav-button:hover{background:var(--gold);color:#000}
+.burger{display:none;background:none;border:0;width:44px;height:44px;cursor:pointer;flex-direction:column;justify-content:center;align-items:center;gap:6px}
+.burger span{display:block;width:24px;height:2px;background:var(--gold);transition:.3s}
+.burger.open span:nth-child(1){transform:translateY(8px) rotate(45deg)}
+.burger.open span:nth-child(2){opacity:0}
+.burger.open span:nth-child(3){transform:translateY(-8px) rotate(-45deg)}
+.nav-right{display:flex;align-items:center;gap:8px}
+
+/* HERO */
+.hero{min-height:100vh;min-height:100svh;display:flex;align-items:center;justify-content:center;text-align:center;padding:120px 20px 80px;position:relative;overflow:hidden;background:radial-gradient(circle at 50% 35%,rgba(214,179,106,.16),transparent 30%),radial-gradient(circle at 20% 80%,rgba(214,179,106,.07),transparent 30%),#080808}
+.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,transparent 40%,rgba(214,179,106,.03) 50%,transparent 60%)}
+.hero-content{max-width:900px;position:relative;z-index:2}
+.small-title{color:var(--gold);letter-spacing:6px;text-transform:uppercase;font-size:13px;margin-bottom:20px}
+.hero h1{font-size:clamp(55px,11vw,130px);line-height:.9;font-weight:900;letter-spacing:-5px}
+.hero h1 span{color:var(--gold)}
+.hero p{color:var(--gray);max-width:600px;margin:30px auto;font-size:17px}
+.hero-button{display:inline-block;margin-top:15px;padding:16px 34px;background:var(--gold);color:#080808;text-decoration:none;font-weight:800;border-radius:4px;transition:.3s}
+.hero-button:hover{background:var(--gold-light);transform:translateY(-3px);box-shadow:0 15px 40px rgba(214,179,106,.2)}
+
+/* GENERAL */
+section{padding:110px 7%}
+.section-title{text-align:center;margin-bottom:60px}
+.section-title .overline{color:var(--gold);text-transform:uppercase;letter-spacing:4px;font-size:12px;margin-bottom:12px}
+.section-title h2{font-size:clamp(35px,5vw,55px);font-weight:800}
+.section-title p{color:var(--gray);margin-top:12px}
+
+/* BARBERS */
+.barbers{background:#0c0c0c}
+.barber-grid{max-width:1000px;margin:auto;display:grid;grid-template-columns:repeat(2,1fr);gap:30px}
+.barber-card{background:linear-gradient(145deg,#181818,#0f0f0f);border:1px solid rgba(255,255,255,.08);padding:45px 30px;text-align:center;cursor:pointer;transition:.35s;position:relative;overflow:hidden}
+.barber-card::before{content:"";position:absolute;top:0;left:0;height:3px;width:0;background:var(--gold);transition:.35s}
+.barber-card:hover,.barber-card.selected{transform:translateY(-8px);border-color:var(--gold);box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.barber-card.selected::before{width:100%}
+.barber-avatar{width:100px;height:100px;margin:auto;border-radius:50%;background:linear-gradient(135deg,var(--gold),#725d30);display:flex;align-items:center;justify-content:center;color:#111;font-size:30px;font-weight:900;margin-bottom:25px}
+.barber-card h3{font-size:25px;margin-bottom:7px}
+.barber-card p{color:var(--gray);font-size:14px}
+.selected-label{margin-top:20px;display:inline-block;color:var(--gold);font-size:12px;letter-spacing:2px;text-transform:uppercase;opacity:0;transition:.3s}
+.barber-card.selected .selected-label{opacity:1}
+
+/* SERVICES */
+.services{background:#080808}
+.service-grid{max-width:1000px;margin:auto;display:grid;grid-template-columns:repeat(2,1fr);gap:25px}
+.service-card{padding:35px;border:1px solid rgba(255,255,255,.08);background:#111;cursor:pointer;transition:.3s;display:flex;justify-content:space-between;align-items:center}
+.service-card:hover,.service-card.selected{border-color:var(--gold);background:#171717}
+.service-info h3{font-size:20px;margin-bottom:5px}
+.service-info p{color:var(--gray);font-size:13px}
+.price{font-size:26px;color:var(--gold);font-weight:800;white-space:nowrap}
+
+/* BOOKING */
+.booking{background:radial-gradient(circle at center,rgba(214,179,106,.08),transparent 35%),#0c0c0c}
+.booking-container{max-width:850px;margin:auto;background:#111;padding:45px;border:1px solid rgba(214,179,106,.2);box-shadow:0 30px 100px rgba(0,0,0,.5)}
+.booking-step{margin-bottom:35px}
+.booking-step-title{color:var(--gold);text-transform:uppercase;letter-spacing:2px;font-size:12px;margin-bottom:15px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.form-group{margin-bottom:18px}
+.form-group.full{grid-column:1/-1}
+label{display:block;color:#ccc;font-size:13px;margin-bottom:8px}
+input{width:100%;min-height:50px;padding:15px;background:#090909;border:1px solid #292929;color:#fff;outline:none;border-radius:3px;font-size:16px;transition:.3s}
+input:focus{border-color:var(--gold)}
+.time-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}
+.time-btn{min-height:48px;padding:13px 8px;background:#0a0a0a;border:1px solid #292929;color:#ddd;font-size:15px;cursor:pointer;transition:.25s}
+.time-btn:hover,.time-btn.selected{background:var(--gold);color:#000;border-color:var(--gold);font-weight:bold}
+.summary{background:#090909;border:1px solid #222;padding:25px;margin-top:30px}
+.summary-row{display:flex;justify-content:space-between;gap:15px;padding:8px 0;color:#bbb}
+.summary-row.total{border-top:1px solid #292929;margin-top:10px;padding-top:18px;color:#fff;font-size:20px;font-weight:800}
+.summary-row.total span:last-child{color:var(--gold)}
+.book-button{width:100%;min-height:56px;margin-top:25px;padding:18px;background:var(--gold);border:none;color:#080808;font-size:15px;font-weight:900;letter-spacing:1px;cursor:pointer;transition:.3s}
+.book-button:hover{background:var(--gold-light);transform:translateY(-2px)}
+.book-button:active{transform:scale(.98)}
+.book-button:disabled{opacity:.6;cursor:wait}
+
+/* SUCCESS */
+.success{display:none;text-align:center;padding:45px 20px}
+.success.show{display:block}
+.success-icon{width:70px;height:70px;border-radius:50%;margin:0 auto 25px;display:flex;align-items:center;justify-content:center;background:var(--gold);color:#000;font-size:30px}
+.success h2{font-size:32px;margin-bottom:10px}
+.success p{color:var(--gray)}
+.booking-form.hidden{display:none}
+
+/* FOOTER */
+footer{padding:50px 7%;background:#050505;border-top:1px solid rgba(255,255,255,.06);text-align:center}
+footer .logo{margin-bottom:15px}
+footer p{color:#666;font-size:13px}
+.footer-gold{color:var(--gold)}
+
+/* MOBILE */
+@media (max-width:700px){
+  nav{padding:12px 5%}
+  .logo{font-size:19px;letter-spacing:3px}
+  .burger{display:flex}
+  .nav-button{padding:9px 14px;font-size:12px}
+  nav ul{display:none}
+  nav ul.open{display:flex;flex-direction:column;gap:0;position:absolute;top:100%;left:0;right:0;background:rgba(8,8,8,.97);padding:10px 5% 20px;border-bottom:1px solid var(--border)}
+  nav ul.open a{display:block;padding:16px 0;font-size:16px;border-bottom:1px solid rgba(255,255,255,.06)}
+  section{padding:80px 5%}
+  .barber-grid,.service-grid,.form-grid{grid-template-columns:1fr}
+  .booking-container{padding:25px 20px}
+  .time-grid{grid-template-columns:repeat(3,1fr)}
+  .hero h1{letter-spacing:-3px}
+  .service-card{padding:25px 20px}
+  .barber-card:hover{transform:none}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">1NULL<span>BARBER</span></div>
+  <ul id="menu">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#barbers">Barber</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#booking">Termin buchen</a></li>
+  </ul>
+  <div class="nav-right">
+    <a class="nav-button" href="#booking">BOOK NOW</a>
+    <button class="burger" id="burger" aria-label="Menü"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<section class="hero" id="home">
+  <div class="hero-content">
+    <div class="small-title">Premium Barber Experience</div>
+    <h1>1NULL<br><span>BARBER</span></h1>
+    <p>Präzise Cuts. Starker Style. Dein Look in den Händen unserer erfahrenen Barber.</p>
+    <a href="#booking" class="hero-button">TERMIN BUCHEN</a>
+  </div>
+</section>
+
+<section class="barbers" id="barbers">
+  <div class="section-title">
+    <div class="overline">Unser Team</div>
+    <h2>Choose Your Barber</h2>
+    <p>Wähle deinen bevorzugten Barber.</p>
+  </div>
+  <div class="barber-grid">
+    <div class="barber-card" data-barber="Raphblenzz">
+      <div class="barber-avatar">RB</div>
+      <h3>Raphblenzz</h3><p>Premium Barber</p>
+      <div class="selected-label">✓ Ausgewählt</div>
+    </div>
+    <div class="barber-card" data-barber="Ilicutzz">
+      <div class="barber-avatar">IC</div>
+      <h3>Ilicutzz</h3><p>Premium Barber</p>
+      <div class="selected-label">✓ Ausgewählt</div>
+    </div>
+  </div>
+</section>
+
+<section class="services" id="services">
+  <div class="section-title">
+    <div class="overline">Unsere Services</div>
+    <h2>Choose Your Cut</h2>
+    <p>Einfach auswählen und Termin buchen.</p>
+  </div>
+  <div class="service-grid">
+    <div class="service-card" data-service="Haarschnitt" data-price="10" data-duration="30">
+      <div class="service-info"><h3>Haarschnitt</h3><p>Fresh Cut &amp; Styling</p></div>
+      <div class="price">10€</div>
+    </div>
+    <div class="service-card" data-service="Haarschnitt + Bart" data-price="15" data-duration="45">
+      <div class="service-info"><h3>Haarschnitt + Bart</h3><p>Cut, Beard &amp; Styling</p></div>
+      <div class="price">15€</div>
+    </div>
+  </div>
+</section>
+
+<section class="booking" id="booking">
+  <div class="section-title">
+    <div class="overline">Appointment</div>
+    <h2>Buche deinen Termin</h2>
+    <p>Wähle Barber, Service, Datum und Uhrzeit.</p>
+  </div>
+
+  <div class="booking-container">
+    <form class="booking-form" id="bookingForm">
+
+      <div class="booking-step">
+        <div class="booking-step-title">01 — Barber</div>
+        <div class="form-grid"><div class="form-group full">
+          <label>Dein Barber</label>
+          <input type="text" id="selectedBarber" placeholder="Bitte oben einen Barber auswählen" readonly required>
+        </div></div>
+      </div>
+
+      <div class="booking-step">
+        <div class="booking-step-title">02 — Service</div>
+        <div class="form-grid"><div class="form-group full">
+          <label>Dein Service</label>
+          <input type="text" id="selectedService" placeholder="Bitte einen Service auswählen" readonly required>
+        </div></div>
+      </div>
+
+      <div class="booking-step">
+        <div class="booking-step-title">03 — Datum &amp; Uhrzeit</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="date">Datum</label>
+            <input type="date" id="date" required>
+          </div>
+          <div class="form-group">
+            <label>Uhrzeit</label>
+            <div class="time-grid">
+              <button type="button" class="time-btn">10:00</button>
+              <button type="button" class="time-btn">11:00</button>
+              <button type="button" class="time-btn">12:00</button>
+              <button type="button" class="time-btn">13:00</button>
+              <button type="button" class="time-btn">14:00</button>
+              <button type="button" class="time-btn">15:00</button>
+              <button type="button" class="time-btn">16:00</button>
+              <button type="button" class="time-btn">17:00</button>
+              <button type="button" class="time-btn">18:00</button>
+              <button type="button" class="time-btn">19:00</button>
+            </div>
+            <input type="hidden" id="selectedTime" required>
+          </div>
+        </div>
+      </div>
+
+      <div class="booking-step">
+        <div class="booking-step-title">04 — Deine Daten</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="name">Vor- &amp; Nachname</label>
+            <input type="text" id="name" placeholder="Max Mustermann" autocomplete="name" required>
+          </div>
+          <div class="form-group">
+            <label for="phone">Telefonnummer</label>
+            <input type="tel" id="phone" placeholder="+49 123 456789" autocomplete="tel" inputmode="tel" required>
+          </div>
+        </div>
+      </div>
+
+      <div class="summary">
+        <div class="summary-row"><span>Barber</span><span id="summaryBarber">—</span></div>
+        <div class="summary-row"><span>Service</span><span id="summaryService">—</span></div>
+        <div class="summary-row"><span>Datum</span><span id="summaryDate">—</span></div>
+        <div class="summary-row"><span>Uhrzeit</span><span id="summaryTime">—</span></div>
+        <div class="summary-row total"><span>Gesamt</span><span id="summaryPrice">0€</span></div>
+      </div>
+
+      <button type="submit" class="book-button" id="bookBtn">TERMIN JETZT BUCHEN</button>
+    </form>
+
+    <div class="success" id="success">
+      <div class="success-icon">✓</div>
+      <h2>Termin bestätigt!</h2>
+      <p id="successText">Dein Termin wurde erfolgreich vorgemerkt.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="logo">1NULL<span>BARBER</span></div>
+  <p>Premium Barber Experience</p>
+  <p style="margin-top:8px;">📍 Wilhelmsaue 30</p>
+  <p style="margin-top:15px;">© 2026 <span class="footer-gold">1NULLBARBER</span> — All Rights Reserved</p>
+</footer>
+
+<script>
+// Adresse deines Servers. Läuft die Seite über den mitgelieferten Server: '/api/book' lassen.
+// Liegt die Seite woanders: z. B. 'https://dein-server.onrender.com/api/book'
+const API_URL = '/api/book';
+
+let barber = "", service = "", price = 0, duration = 30, time = "";
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+// MOBILE MENÜ
+const burger = $("burger"), menu = $("menu");
+burger.addEventListener("click", () => { burger.classList.toggle("open"); menu.classList.toggle("open"); });
+menu.querySelectorAll("a").forEach(a => a.addEventListener("click", () => { burger.classList.remove("open"); menu.classList.remove("open"); }));
+
+// BARBER
+const barberCards = document.querySelectorAll(".barber-card");
+barberCards.forEach(card => card.addEventListener("click", () => {
+  barberCards.forEach(c => c.classList.remove("selected"));
+  card.classList.add("selected");
+  barber = card.dataset.barber;
+  $("selectedBarber").value = barber;
+  $("summaryBarber").textContent = barber;
+}));
+
+// SERVICE
+const serviceCards = document.querySelectorAll(".service-card");
+serviceCards.forEach(card => card.addEventListener("click", () => {
+  serviceCards.forEach(c => c.classList.remove("selected"));
+  card.classList.add("selected");
+  service = card.dataset.service;
+  price = card.dataset.price;
+  duration = Number(card.dataset.duration) || 30;
+  $("selectedService").value = service;
+  $("summaryService").textContent = service;
+  $("summaryPrice").textContent = price + "€";
+}));
+
+// UHRZEIT
+const timeButtons = document.querySelectorAll(".time-btn");
+timeButtons.forEach(btn => btn.addEventListener("click", () => {
+  timeButtons.forEach(b => b.classList.remove("selected"));
+  btn.classList.add("selected");
+  time = btn.textContent;
+  $("selectedTime").value = time;
+  $("summaryTime").textContent = time;
+}));
+
+// DATUM
+const dateInput = $("date");
+dateInput.min = new Date().toISOString().split("T")[0];
+const fmt = (v) => new Date(v + "T12:00:00").toLocaleDateString("de-DE", {day:"2-digit", month:"2-digit", year:"numeric"});
+dateInput.addEventListener("change", () => { $("summaryDate").textContent = dateInput.value ? fmt(dateInput.value) : "—"; });
+
+// FORMULAR
+$("bookingForm").addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  if (!barber)  { alert("Bitte wähle zuerst einen Barber aus.");  $("barbers").scrollIntoView({behavior:"smooth"}); return; }
+  if (!service) { alert("Bitte wähle zuerst einen Service aus."); $("services").scrollIntoView({behavior:"smooth"}); return; }
+  if (!time)    { alert("Bitte wähle eine Uhrzeit aus."); return; }
+
+  const name = $("name").value.trim();
+  const phone = $("phone").value.trim();
+  const btn = $("bookBtn");
+
+  btn.disabled = true;
+  btn.textContent = "WIRD GESENDET…";
+
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name, phone, date: dateInput.value, time, service, barber,
+        price: price + " €", durationMin: duration
+      })
+    });
+    const json = await res.json();
+    if (!json.ok) throw new Error(json.error || "Fehler beim Buchen.");
+
+    $("successText").innerHTML =
+      `Danke <strong>${esc(name)}</strong>!<br><br>
+       Dein Termin bei <strong>${esc(barber)}</strong> für <strong>${esc(service)}</strong>
+       am <strong>${fmt(dateInput.value)}</strong> um <strong>${esc(time)} Uhr</strong> wurde erfolgreich vorgemerkt.
+       <br><br>Preis: <strong style="color:#d6b36a">${esc(price)}€</strong>
+       <br><br>Wir freuen uns auf dich!`;
+
+    $("bookingForm").classList.add("hidden");
+    $("success").classList.add("show");
+    window.scrollTo({ top: $("booking").offsetTop - 80, behavior: "smooth" });
+  } catch (err) {
+    alert(err.message || "Der Termin konnte nicht gebucht werden. Bitte versuche es erneut.");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "TERMIN JETZT BUCHEN";
+  }
+});
+</script>
+</body>
+</html>
